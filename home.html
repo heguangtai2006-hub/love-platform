@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我们的爱情小窝 💕</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --pink: #ff6b9d; --deep: #e9457b; --rose: #d6336c;
+    --soft: #ffe3ec; --text: #54394a; --muted: #9d6b81;
+    --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+    --shadow: 0 10px 40px -12px rgba(214,51,108,.25);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
+    color: var(--text); overflow-x: hidden;
+    background:
+      radial-gradient(1100px 480px at 85% -8%, #ffe9f1 0%, transparent 60%),
+      radial-gradient(900px 520px at -8% 45%, #fff0f6 0%, transparent 55%),
+      linear-gradient(165deg, #fff9fb 0%, #fff1f6 55%, #ffe7f0 100%);
+    background-attachment: fixed;
+  }
+  ::selection { background: var(--soft); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-thumb { background: #f3c4d5; border-radius: 8px; }
+
+  .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .heart-float {
+    position: absolute; bottom: -40px; color: rgba(255,107,157,.3);
+    animation: floatUp linear infinite; user-select: none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    12% { opacity: 1; }
+    100% { transform: translateY(-112vh) rotate(340deg); opacity: 0; }
+  }
+
+  section { position: relative; z-index: 1; padding: 90px 22px; max-width: 1000px; margin: 0 auto; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: .75s cubic-bezier(.2,.7,.3,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: center; align-items: center; gap: 26px; flex-wrap: wrap;
+    padding: 13px 16px; background: rgba(255,249,251,.82); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(242,205,220,.5);
+  }
+  nav a { color: var(--rose); text-decoration: none; font-size: 14px; font-weight: 600; transition: .2s; }
+  nav a:hover { opacity: .65; }
+  .lang-btn {
+    border: 1.5px solid #f2cddc; background: #fff; color: var(--rose);
+    border-radius: 30px; padding: 4px 13px; font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s;
+  }
+  .lang-btn:hover { border-color: var(--pink); }
+
+  /* 首屏 */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding-top: 90px;
+  }
+  .amp { font-family: var(--serif); font-style: italic; }
+  .couple-avatar { display: flex; align-items: center; justify-content: center; gap: 26px; margin-bottom: 30px; }
+  .avatar {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--deep));
+    display: grid; place-items: center; color: #fff; font-size: 38px;
+    box-shadow: 0 14px 34px -8px rgba(233,69,123,.5), inset 0 0 0 5px rgba(255,255,255,.35);
+    animation: beat 1.8s ease-in-out infinite;
+  }
+  .heart-beat { font-size: 40px; animation: beat 1.15s ease-in-out infinite; }
+  @keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.13); } }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 6vw, 56px); letter-spacing: -1px;
+    background: linear-gradient(120deg, var(--rose) 20%, var(--pink) 60%, #b23a7b 95%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero .sub { font-size: clamp(14px, 2.4vw, 17px); color: var(--muted); margin-bottom: 40px; letter-spacing: 1px; }
+
+  .counter { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .counter .unit {
+    background: rgba(255,255,255,.8); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.95);
+    border-radius: 18px; padding: 18px 10px; min-width: 96px;
+    box-shadow: 0 8px 26px -10px rgba(214,51,108,.28);
+  }
+  .counter .num {
+    font-family: var(--serif); font-size: 38px; font-weight: 700; color: var(--rose);
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .counter .label { font-size: 12px; color: var(--muted); margin-top: 6px; letter-spacing: 2px; }
+  .next-anniv { margin-top: 26px; color: var(--muted); font-size: 14px; }
+  .next-anniv b { color: var(--rose); }
+
+  h2.section-title {
+    font-family: var(--serif); text-align: center; font-size: clamp(24px, 4vw, 32px);
+    color: var(--rose); margin-bottom: 46px; letter-spacing: 1px;
+  }
+  h2.section-title::after {
+    content: ""; display: block; width: 46px; height: 3px; margin: 14px auto 0;
+    background: linear-gradient(90deg, transparent, var(--pink), transparent); border-radius: 3px;
+  }
+
+  /* 相册 + 灯箱 */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .photo-card {
+    background: #fff; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 10px 30px -12px rgba(214,51,108,.3); transition: .35s; cursor: zoom-in;
+  }
+  .photo-card:hover { transform: translateY(-7px) scale(1.015); box-shadow: 0 18px 44px -14px rgba(214,51,108,.42); }
+  .photo-card img { width: 100%; height: 210px; object-fit: cover; display: block; transition: .5s; }
+  .photo-card:hover img { transform: scale(1.05); }
+  .photo-card .cap { padding: 13px 16px; font-size: 13.5px; color: #8a5a6e; text-align: center; }
+  #lightbox {
+    position: fixed; inset: 0; z-index: 1500; background: rgba(60,30,42,.88);
+    display: none; align-items: center; justify-content: center; cursor: zoom-out; padding: 24px;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 92vw; max-height: 85vh; border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  #lightbox .lb-cap { position: absolute; bottom: 30px; color: #ffd9e7; font-size: 14px; letter-spacing: 1px; }
+
+  /* 时间轴 */
+  .timeline { position: relative; max-width: 620px; margin: 0 auto; padding-left: 34px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px;
+    background: linear-gradient(var(--pink), var(--soft)); border-radius: 2px;
+  }
+  .tl-item { position: relative; margin-bottom: 38px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -32px; top: 4px; width: 14px; height: 14px;
+    background: linear-gradient(135deg, var(--pink), var(--rose)); border-radius: 50%;
+    box-shadow: 0 0 0 5px #fff, 0 0 0 6px #ffd6e5;
+  }
+  .tl-date { font-size: 12.5px; color: #c47b95; font-weight: 700; letter-spacing: 1.5px; }
+  .tl-title { font-family: var(--serif); font-size: 19px; color: var(--rose); margin: 5px 0 6px; }
+  .tl-text { font-size: 14.5px; line-height: 1.8; color: #6e4a5c; }
+
+  /* 心愿 */
+  .wishlist { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px; }
+  .wish {
+    background: rgba(255,255,255,.82); border: 1px solid rgba(255,255,255,.95);
+    border-radius: 15px; padding: 17px 18px; font-size: 14.5px;
+    display: flex; align-items: center; gap: 11px; cursor: pointer; transition: .25s;
+    box-shadow: 0 6px 20px -8px rgba(214,51,108,.22);
+  }
+  .wish:hover { background: #fff; transform: translateY(-3px); }
+  .wish .box { font-size: 19px; transition: .3s; }
+  .wish.done { text-decoration: line-through; color: #bd93a6; }
+  .wish.done .box { transform: scale(1.15); }
+  .wish.done .box::after { content: " ✅"; font-size: 13px; }
+  .center-note { text-align: center; margin-top: 18px; font-size: 12.5px; color: #bb90a2; }
+
+  /* 留言 */
+  .msg-board { max-width: 620px; margin: 0 auto; }
+  .msg-input { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .msg-input select, .msg-input input {
+    padding: 12px 16px; border: 1.5px solid #f2d6e1; border-radius: 13px;
+    font-size: 14.5px; outline: none; background: #fff; color: var(--text); font-family: inherit; transition: .2s;
+  }
+  .msg-input input { flex: 1; min-width: 190px; }
+  .msg-input input:focus, .msg-input select:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,107,157,.12); }
+  .msg-input button {
+    padding: 12px 26px; border: none; border-radius: 13px;
+    background: linear-gradient(135deg, var(--pink), var(--rose)); color: #fff;
+    font-size: 14.5px; font-weight: 700; cursor: pointer; transition: .25s; font-family: inherit;
+    box-shadow: 0 8px 20px -6px rgba(214,51,108,.5);
+  }
+  .msg-input button:hover { transform: translateY(-2px); }
+  .msg-item {
+    background: rgba(255,255,255,.85); border-radius: 15px; padding: 15px 18px;
+    margin-bottom: 12px; box-shadow: 0 5px 18px -8px rgba(214,51,108,.25);
+    animation: msgIn .4s cubic-bezier(.2,.7,.3,1);
+  }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } }
+  .msg-item .who { font-size: 12.5px; color: #c47b95; font-weight: 700; margin-bottom: 4px; }
+  .msg-item .body { font-size: 14.5px; line-height: 1.6; }
+  .msg-item .del { float: right; color: #dcafc1; cursor: pointer; font-size: 12px; }
+  .msg-item .del:hover { color: var(--rose); }
+
+  footer { text-align: center; padding: 46px 20px 64px; color: #c39aa9; font-size: 13px; z-index: 1; position: relative; line-height: 2; }
+  footer a { color: #c47b95; }
+
+  .click-heart {
+    position: fixed; pointer-events: none; z-index: 999;
+    animation: pop .8s ease-out forwards; font-size: 22px;
+  }
+  @keyframes pop {
+    0% { transform: scale(0) translateY(0); opacity: 1; }
+    100% { transform: scale(1.4) translateY(-64px); opacity: 0; }
+  }
+
+  /* 锁屏 */
+  #lockScreen {
+    position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    background: radial-gradient(900px 500px at 50% 0%, #ffeef4, #ffdfe9);
+    text-align: center; padding: 20px; z-index: 2000;
+  }
+  #lockScreen .lock-icon { font-size: 60px; animation: beat 1.7s infinite; }
+  #lockScreen h2 { font-family: var(--serif); color: var(--rose); font-size: 25px; }
+  #lockScreen p { color: var(--muted); font-size: 13.5px; }
+  #lockScreen input {
+    padding: 14px 18px; border: 1.5px solid #f2d6e1; border-radius: 14px;
+    font-size: 17px; text-align: center; letter-spacing: 4px; outline: none; width: 250px;
+    transition: .2s; background: #fff;
+  }
+  #lockScreen input:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,107,157,.12); }
+  #lockScreen button {
+    padding: 14px 44px; border: none; border-radius: 14px; font-size: 15.5px; font-weight: 700;
+    font-family: inherit; background: linear-gradient(135deg, var(--pink), var(--rose)); color: #fff;
+    cursor: pointer; box-shadow: 0 10px 26px -6px rgba(214,51,108,.5); transition: .25s;
+  }
+  #lockScreen button:hover { transform: translateY(-2px); }
+  #lockScreen .err { color: var(--rose); font-size: 12.5px; min-height: 17px; }
+  #lockScreen .lang-btn { margin-top: 6px; }
+
+  /* 编辑按钮 + 弹窗(通用) */
+  .edit-fab {
+    position: fixed; right: 22px; bottom: 22px; z-index: 900;
+    width: 54px; height: 54px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--pink), var(--rose));
+    color: #fff; font-size: 22px;
+    box-shadow: 0 12px 30px -6px rgba(214,51,108,.55); transition: .25s;
+  }
+  .edit-fab:hover { transform: rotate(40deg) scale(1.08); }
+  .modal-mask {
+    position: fixed; inset: 0; z-index: 1000; background: rgba(70,38,52,.45);
+    backdrop-filter: blur(4px);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 44px 16px; overflow-y: auto;
+  }
+  .modal-mask.open { display: flex; }
+  .modal {
+    background: #fffafc; border-radius: 24px; width: 100%; max-width: 620px;
+    padding: 30px; box-shadow: 0 30px 80px rgba(70,38,52,.4);
+    animation: msgIn .35s;
+  }
+  .modal h3 { color: var(--rose); margin-bottom: 6px; font-size: 21px; }
+  .modal .hint { font-size: 12.5px; color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+  .form-row { margin-bottom: 15px; }
+  .form-row label { display: block; font-size: 12.5px; font-weight: 700; color: #a06a80; margin-bottom: 6px; letter-spacing: .5px; }
+  .form-row input {
+    width: 100%; padding: 11px 13px; border: 1.5px solid #f2d6e1; border-radius: 11px;
+    font-size: 14px; outline: none; font-family: inherit; background: #fff; color: var(--text); transition: .2s;
+  }
+  .form-row input:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,107,157,.1); }
+  .edit-item {
+    display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap;
+    background: #fff; border-radius: 12px; padding: 10px;
+    box-shadow: 0 3px 12px rgba(214,51,108,.07);
+  }
+  .edit-item input, .edit-item textarea {
+    flex: 1; padding: 8px 10px; border: 1.5px solid #f2d6e1; border-radius: 9px;
+    font-size: 13px; outline: none; font-family: inherit; min-width: 0; transition: .2s;
+  }
+  .edit-item input:focus, .edit-item textarea:focus { border-color: var(--pink); }
+  .edit-item .rm {
+    border: none; background: var(--soft); color: var(--rose); border-radius: 9px;
+    width: 31px; height: 31px; cursor: pointer; font-size: 12px; flex-shrink: 0; transition: .2s;
+  }
+  .edit-item .rm:hover { background: var(--pink); color: #fff; }
+  .btn-add {
+    width: 100%; padding: 10px; border: 1.5px dashed var(--pink); background: transparent;
+    color: var(--rose); border-radius: 11px; cursor: pointer; font-size: 13.5px; font-weight: 600;
+    margin-bottom: 15px; font-family: inherit; transition: .2s;
+  }
+  .btn-add:hover { background: var(--soft); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .modal-actions button {
+    flex: 1; min-width: 120px; padding: 13px; border: none; border-radius: 12px;
+    font-size: 14.5px; font-weight: 700; cursor: pointer; transition: .2s; font-family: inherit;
+  }
+  .btn-save { background: linear-gradient(135deg, var(--pink), var(--rose)); color: #fff; box-shadow: 0 8px 22px -6px rgba(214,51,108,.5); }
+  .btn-save:hover { transform: translateY(-2px); }
+  .btn-cancel { background: #f4e6ec; color: #8a5a6e; }
+  .toast {
+    position: fixed; top: 72px; left: 50%; transform: translateX(-50%) translateY(-20px);
+    background: var(--rose); color: #fff; padding: 11px 26px; border-radius: 30px;
+    font-size: 13.5px; box-shadow: 0 10px 26px rgba(214,51,108,.4);
+    opacity: 0; transition: .3s; z-index: 1100; pointer-events: none; max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* 首次配置向导 */
+  #wizard { z-index: 1200; }
+  .wz-steps { display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; }
+  .wz-dot { width: 10px; height: 10px; border-radius: 50%; background: #f2cfdd; transition: .3s; }
+  .wz-dot.on { background: var(--rose); transform: scale(1.25); }
+  .wz-emoji-pick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
+  .wz-emoji-pick button {
+    font-size: 24px; padding: 8px 0; border: 1.5px solid #f6dbe6; border-radius: 12px;
+    background: #fff; cursor: pointer; transition: .15s;
+  }
+  .wz-emoji-pick button:hover { transform: scale(1.12); border-color: var(--pink); }
+  .wz-emoji-pick button.sel { border-color: var(--rose); background: var(--soft); transform: scale(1.12); }
+</style>
+</head>
+<body>
+
+<!-- 锁屏 -->
+<div id="lockScreen">
+  <div class="lock-icon">🔒</div>
+  <h2 data-i18n="lockTitle">我们的爱情小窝</h2>
+  <p data-i18n="lockTip">这是只属于我们两个人的空间</p>
+  <input id="passInput" type="password" data-i18n-ph="lockPh" maxlength="20">
+  <div class="err" id="lockErr"></div>
+  <button onclick="unlock()" data-i18n="lockBtn">进入 💕</button>
+  <button class="lang-btn" onclick="toggleLang()" data-i18n="langSwitch">EN</button>
+  <p style="font-size:12px;"><a href="/" style="color:#c47b95;" data-i18n="backHome">← 返回首页</a></p>
+</div>
+
+<div id="site" style="display:none;">
+<nav>
+  <a href="#home" data-i18n="nav1">首页</a>
+  <a href="#album" data-i18n="nav2">相册</a>
+  <a href="#story" data-i18n="nav3">我们的故事</a>
+  <a href="#wish" data-i18n="nav4">心愿清单</a>
+  <a href="#message" data-i18n="nav5">留言板</a>
+  <button class="lang-btn" onclick="toggleLang()" data-i18n="langSwitch">EN</button>
+</nav>
+
+<section class="hero" id="home">
+  <div class="couple-avatar">
+    <div class="avatar" id="avatarA">🐶</div>
+    <div class="heart-beat">❤️</div>
+    <div class="avatar" id="avatarB">🐱</div>
+  </div>
+  <h1 id="coupleNames">宝贝 & 我</h1>
+  <p class="sub" data-i18n="heroSub">从遇见你的那天起,每一天都是情人节</p>
+  <div class="counter">
+    <div class="unit"><div class="num" id="dDays">0</div><div class="label" data-i18n="uDay">天</div></div>
+    <div class="unit"><div class="num" id="dHours">0</div><div class="label" data-i18n="uHour">小时</div></div>
+    <div class="unit"><div class="num" id="dMins">0</div><div class="label" data-i18n="uMin">分钟</div></div>
+    <div class="unit"><div class="num" id="dSecs">0</div><div class="label" data-i18n="uSec">秒</div></div>
+  </div>
+  <p class="next-anniv" id="nextAnniv"></p>
+</section>
+
+<section id="album" class="reveal">
+  <h2 class="section-title" data-i18n="albumTitle">我们的相册</h2>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section id="story" class="reveal">
+  <h2 class="section-title" data-i18n="storyTitle">我们的故事</h2>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<section id="wish" class="reveal">
+  <h2 class="section-title" data-i18n="wishTitle">一起完成的心愿清单</h2>
+  <div class="wishlist" id="wishlist"></div>
+  <p class="center-note" data-i18n="wishTip">点击条目即可勾选已完成 ✅(双方实时同步)</p>
+</section>
+
+<section id="message" class="reveal">
+  <h2 class="section-title" data-i18n="msgTitle">悄悄话留言板</h2>
+  <div class="msg-board">
+    <div class="msg-input">
+      <select id="msgWho"></select>
+      <input id="msgInput" data-i18n-ph="msgPh" maxlength="100">
+      <button onclick="addMsg()" data-i18n="msgBtn">发送 💘</button>
+    </div>
+    <div id="msgList"></div>
+  </div>
+</section>
+
+<footer>
+  <span data-i18n="footerLove">— 永远爱你,直到时间尽头 💏 —</span><br>
+  <small data-i18n="footerCode">小窝编号</small>:<span id="slugShow"></span> · <a href="/" data-i18n="footerHome">平台首页</a>
+</footer>
+<div class="hearts-bg" id="heartsBg"></div>
+
+<button class="edit-fab" onclick="openEdit()" title="Edit">⚙️</button>
+
+<!-- 首次配置向导 -->
+<div class="modal-mask" id="wizard">
+  <div class="modal">
+    <h3 id="wzTitle"></h3>
+    <p class="hint" id="wzHint"></p>
+    <div class="wz-steps"><span class="wz-dot" id="dot1"></span><span class="wz-dot" id="dot2"></span><span class="wz-dot" id="dot3"></span></div>
+
+    <div id="wzStep1" style="display:none;">
+      <div class="form-row"><label data-i18n="wzNameA">TA 的名字</label><input id="wzNameA" maxlength="12"></div>
+      <div class="form-row"><label data-i18n="wzNameB">你的名字</label><input id="wzNameB" maxlength="12"></div>
+      <div class="form-row"><label data-i18n="wzEmoji">选两个可爱的头像(先给 TA 选一个)</label><span id="wzPickA"></span></div>
+      <div class="form-row"><label data-i18n="wzEmoji2">再给你自己选一个</label><span id="wzPickB"></span></div>
+    </div>
+
+    <div id="wzStep2" style="display:none;">
+      <div class="form-row"><label data-i18n="wzDate">你们是哪一天在一起的?</label><input id="wzDate" type="date"></div>
+      <p class="hint" data-i18n="wzDateTip">不确定到"天"?选一个你们都认可的纪念日就好,以后随时可以改。</p>
+    </div>
+
+    <div id="wzStep3" style="display:none;text-align:center;padding: 12px 0;">
+      <div style="font-size:56px;">🎉</div>
+      <p style="color:var(--rose);font-size:18px;font-weight:700;" data-i18n="wzDoneT">小窝布置好啦!</p>
+      <p class="hint" data-i18n="wzDoneD">把网址发给 TA,输入同一个暗号就能进入你们的小窝。以后想改任何内容,点右下角的小齿轮 ⚙️ 就行。</p>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="wzPrev" onclick="wzGo(-1)" data-i18n="wzPrev">上一步</button>
+      <button class="btn-save" id="wzNext" onclick="wzGo(1)" data-i18n="wzNext">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑弹窗 -->
+<div class="modal-mask" id="editModal">
+  <div class="modal">
+    <h3 data-i18n="edTitle">✏️ 编辑我们的小窝</h3>
+    <p class="hint" data-i18n="edHint">保存后立刻同步,对方刷新网页就能看到 💕</p>
+    <div class="form-row"><label data-i18n="edNameA">TA 的名字</label><input id="cfgNameA" maxlength="12"></div>
+    <div class="form-row"><label data-i18n="edNameB">你的名字</label><input id="cfgNameB" maxlength="12"></div>
+    <div class="form-row"><label data-i18n="edEmoji">头像 emoji(各填一个)</label>
+      <div style="display:flex;gap:8px;">
+        <input id="cfgEmojiA" maxlength="4" style="text-align:center;">
+        <input id="cfgEmojiB" maxlength="4" style="text-align:center;">
+      </div>
+    </div>
+    <div class="form-row"><label data-i18n="edDate">在一起的日期</label><input id="cfgDate" type="datetime-local"></div>
+    <div class="form-row">
+      <label data-i18n="edPhotos">📷 相册照片(图片链接 + 说明)</label>
+      <div id="editPhotos"></div>
+      <button class="btn-add" onclick="addPhotoRow('','')" data-i18n="edAddPhoto">＋ 添加一张照片</button>
+    </div>
+    <div class="form-row">
+      <label data-i18n="edStory">📖 我们的故事(日期 / 标题 / 内容)</label>
+      <div id="editTimeline"></div>
+      <button class="btn-add" onclick="addStoryRow('','','')" data-i18n="edAddStory">＋ 添加一段故事</button>
+    </div>
+    <div class="form-row">
+      <label data-i18n="edWish">💝 心愿清单</label>
+      <div id="editWishes"></div>
+      <button class="btn-add" onclick="addWishRow('')" data-i18n="edAddWish">＋ 添加一个心愿</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveConfig()" data-i18n="edSave">保存并同步 💾</button>
+      <button class="btn-cancel" onclick="closeEdit()" data-i18n="edCancel">取消</button>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" onclick="this.classList.remove('open')"><img id="lbImg" src=""><div class="lb-cap" id="lbCap"></div></div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ============ 多语言 ============ */
+const I18N = {
+  zh: {
+    langSwitch: "EN",
+    nav1: "首页", nav2: "相册", nav3: "我们的故事", nav4: "心愿清单", nav5: "留言板",
+    heroSub: "从遇见你的那天起,每一天都是情人节",
+    uDay: "天", uHour: "小时", uMin: "分钟", uSec: "秒",
+    anniv: p => `距离「${p}」还有 <b>${d}</b> 天 🎉`,
+    albumTitle: "我们的相册",
+    storyTitle: "我们的故事",
+    wishTitle: "一起完成的心愿清单",
+    wishTip: "点击条目即可勾选已完成 ✅(双方实时同步)",
+    msgTitle: "悄悄话留言板",
+    msgPh: "写一句想对 TA 说的话...", msgBtn: "发送 💘",
+    msgEmpty: "还没有留言,来说第一句悄悄话吧 💌",
+    footerLove: "— 永远爱你,直到时间尽头 💏 —",
+    footerCode: "小窝编号", footerHome: "平台首页",
+    lockTitle: "我们的爱情小窝", lockTip: "这是只属于我们两个人的空间",
+    lockPh: "输入你们的暗号", lockBtn: "进入 💕", lockErr: "暗号不对哦,再想想~",
+    backHome: "← 返回首页",
+    noPhoto: "还没有照片,点右下角 ⚙️ 添加吧",
+    and: "&",
+    wzTitle: "🌟 欢迎来到你们的小窝!",
+    wzHint: "跟我走,3 步把小窝布置好 —— 只需要填几个空,很简单",
+    wzNameA: "TA 的名字", wzNameB: "你的名字",
+    wzEmoji: "先给 TA 选一个可爱的头像", wzEmoji2: "再给你自己选一个",
+    wzDate: "你们是哪一天在一起的?",
+    wzDateTip: "不确定到具体哪一天?选一个你们都认可的纪念日就好,以后随时可以改。",
+    wzPrev: "上一步", wzNext: "下一步", wzStart: "开始布置 ✨", wzFinish: "完成 💕",
+    wzDoneT: "小窝布置好啦!",
+    wzDoneD: "把网址发给 TA,输入同一个暗号就能进入你们的小窝。以后想改任何内容,点右下角的小齿轮 ⚙️ 就行。",
+    wzErrDate: "选一个日期吧~",
+    edTitle: "✏️ 编辑我们的小窝",
+    edHint: "保存后立刻同步,对方刷新网页就能看到 💕",
+    edNameA: "TA 的名字", edNameB: "你的名字", edEmoji: "头像 emoji(各填一个)",
+    edDate: "在一起的日期",
+    edPhotos: "📷 相册照片(图片链接 + 说明)", edAddPhoto: "＋ 添加一张照片",
+    edStory: "📖 我们的故事(日期 / 标题 / 内容)", edAddStory: "＋ 添加一段故事",
+    edWish: "💝 心愿清单", edAddWish: "＋ 添加一个心愿",
+    edSave: "保存并同步 💾", edCancel: "取消",
+    savedToast: "已保存并同步 💕 对方刷新即可看到",
+  },
+  en: {
+    langSwitch: "中文",
+    nav1: "Home", nav2: "Album", nav3: "Our Story", nav4: "Wish List", nav5: "Messages",
+    heroSub: "Since the day I met you, every day is Valentine's Day",
+    uDay: "DAYS", uHour: "HOURS", uMin: "MINS", uSec: "SECS",
+    anniv: p => `${d} days until <b>${p}</b> 🎉`,
+    albumTitle: "Our Album",
+    storyTitle: "Our Story",
+    wishTitle: "Wish List to Complete Together",
+    wishTip: "Tap an item to check it off ✅ (synced for both of you)",
+    msgTitle: "Secret Messages",
+    msgPh: "Write something for your love...", msgBtn: "Send 💘",
+    msgEmpty: "No messages yet — say something sweet 💌",
+    footerLove: "— Love you forever, until the end of time 💏 —",
+    footerCode: "Nest code", footerHome: "Home",
+    lockTitle: "Our Love Nest", lockTip: "A private space just for the two of us",
+    lockPh: "Enter your secret code", lockBtn: "Enter 💕", lockErr: "Wrong code, try again~",
+    backHome: "← Back",
+    noPhoto: "No photos yet — tap the ⚙️ button to add some",
+    and: "&",
+    wzTitle: "🌟 Welcome to your nest!",
+    wzHint: "Let's set it up in 3 easy steps — just fill in a few blanks",
+    wzNameA: "Your love's name", wzNameB: "Your name",
+    wzEmoji: "Pick a cute avatar for your love", wzEmoji2: "Now pick one for yourself",
+    wzDate: "When did you get together?",
+    wzDateTip: "Not sure about the exact day? Pick a day you both agree on — you can change it anytime.",
+    wzPrev: "Back", wzNext: "Next", wzStart: "Let's decorate ✨", wzFinish: "Done 💕",
+    wzDoneT: "Your nest is ready!",
+    wzDoneD: "Send the link to your love — the same secret code opens your nest. To change anything later, tap the little gear ⚙️ in the corner.",
+    wzErrDate: "Please pick a date~",
+    edTitle: "✏️ Edit Our Nest",
+    edHint: "Changes sync instantly — your love just refreshes the page 💕",
+    edNameA: "Your love's name", edNameB: "Your name", edEmoji: "Avatar emoji (one each)",
+    edDate: "The day you got together",
+    edPhotos: "📷 Album photos (image link + caption)", edAddPhoto: "＋ Add a photo",
+    edStory: "📖 Our story (date / title / text)", edAddStory: "＋ Add a story",
+    edWish: "💝 Wish list", edAddWish: "＋ Add a wish",
+    edSave: "Save & Sync 💾", edCancel: "Cancel",
+    savedToast: "Saved & synced 💕 Your love will see it on refresh",
+  },
+};
+let LANG = localStorage.getItem("lang") || "zh";
+function applyLang() {
+  document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.dataset.i18n, v = I18N[LANG][k];
+    if (typeof v === "string") el.innerHTML = v;
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+    const v = I18N[LANG][el.dataset.i18nPh];
+    if (typeof v === "string") el.placeholder = v;
+  });
+  if (CONFIG) renderAll(true);
+}
+function toggleLang() {
+  LANG = LANG === "zh" ? "en" : "zh";
+  localStorage.setItem("lang", LANG);
+  applyLang();
+}
+const t = k => I18N[LANG][k];
+
+/* ============ 小窝数据 ============ */
+const SLUG = location.pathname.split("/").pop();
+const KEY = "loveToken-" + SLUG;
+let TOKEN = sessionStorage.getItem(KEY) || "";
+const BASE = "/api/h/" + SLUG;
+let CONFIG = null, MSGS = [];
+
+const api = (path, opts = {}) => fetch(BASE + path, {
+  ...opts,
+  headers: { "Content-Type": "application/json", "x-love-token": TOKEN, ...(opts.headers||{}) },
+}).then(async r => {
+  if (r.status === 401 && !path.endsWith("/status")) { location.reload(); throw new Error("unauthorized"); }
+  return r.json();
+});
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+
+/* ---- 锁屏 ---- */
+async function initLock() { lockScreen.style.display = "flex"; passInput.focus(); }
+async function unlock() {
+  const r = await fetch(BASE + "/login", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ passcode: passInput.value.trim() }),
+  });
+  if (r.ok) {
+    const data = await r.json();
+    TOKEN = data.token; sessionStorage.setItem(KEY, TOKEN);
+    lockScreen.style.display = "none"; site.style.display = "block";
+    await boot();
+  } else { lockErr.textContent = t("lockErr"); passInput.select(); }
+}
+passInput.addEventListener("keydown", e => { if (e.key === "Enter") unlock(); });
+
+/* ---- 主页面 ---- */
+async function boot() {
+  slugShow.textContent = SLUG;
+  const data = await api("/data");
+  CONFIG = data.config; MSGS = data.messages || [];
+  renderAll(); renderMsgs();
+  tick(); setInterval(tick, 1000);
+  setInterval(async () => {
+    try {
+      const d = await api("/data");
+      CONFIG = d.config; MSGS = d.messages || [];
+      renderAll(); renderMsgs();
+    } catch (e) {}
+  }, 30000);
+  // 首次进入 → 打开配置向导
+  if (sessionStorage.getItem("setupDone-" + SLUG) !== "yes") wzOpen();
+}
+
+function renderAll(skipIO) {
+  coupleNames.textContent = CONFIG.nameA + " " + t("and") + " " + CONFIG.nameB;
+  avatarA.textContent = CONFIG.emojiA;
+  avatarB.textContent = CONFIG.emojiB;
+  msgWho.innerHTML = `<option>${esc(CONFIG.nameA)}</option><option>${esc(CONFIG.nameB)}</option>`;
+  gallery.innerHTML = CONFIG.photos.filter(p => p.src).map((p, i) =>
+    `<div class="photo-card" onclick="showLb(${i})"><img src="${esc(p.src)}" alt="${esc(p.cap)}" loading="lazy"><div class="cap">${esc(p.cap)}</div></div>`
+  ).join("") || `<p class="center-note">${t("noPhoto")}</p>`;
+  timeline.innerHTML = CONFIG.timeline.filter(x => x.title || x.text)
+    .sort((a,b) => (a.date||"").localeCompare(b.date||""))
+    .map(x => `<div class="tl-item"><div class="tl-date">${esc(x.date)}</div><div class="tl-title">${esc(x.title)}</div><div class="tl-text">${esc(x.text)}</div></div>`).join("");
+  const done = CONFIG.wishDone || [];
+  wishlist.innerHTML = CONFIG.wishes.filter(w => w).map(w => {
+    const i = CONFIG.wishes.indexOf(w);
+    return `<div class="wish ${done[i] ? "done" : ""}" data-i="${i}"><span class="box">💝</span>${esc(w)}</div>`;
+  }).join("");
+}
+function showLb(i) {
+  const p = CONFIG.photos.filter(x => x.src)[i];
+  if (!p) return;
+  lbImg.src = p.src; lbCap.textContent = p.cap;
+  lightbox.classList.add("open");
+}
+
+/* ---- 计时器 ---- */
+let d = 0;
+function tick() {
+  const start = new Date(CONFIG.togetherSince);
+  if (isNaN(start)) return;
+  const diff = Date.now() - start.getTime();
+  d = Math.floor(diff / 86400000);
+  dDays.textContent = d;
+  dHours.textContent = Math.floor(diff % 86400000 / 3600000);
+  dMins.textContent = Math.floor(diff % 3600000 / 60000);
+  dSecs.textContent = Math.floor(diff % 60000 / 1000);
+  const now = new Date();
+  const annivs = [];
+  const y = now.getFullYear() - start.getFullYear();
+  for (let i = Math.max(1, y); i <= y + 2; i++) {
+    const dt = new Date(start); dt.setFullYear(start.getFullYear() + i);
+    annivs.push({ day: dt, label: (LANG === "zh" ? i + " 周年纪念日" : i + (i === 1 ? "st" : i === 2 ? "nd" : i === 3 ? "rd" : "th") + " Anniversary") });
+  }
+  const n100 = Math.ceil((d + 1) / 100) * 100;
+  annivs.push({ day: new Date(start.getTime() + n100 * 86400000), label: (LANG === "zh" ? "在一起 " + n100 + " 天" : n100 + " Days Together") });
+  annivs.sort((a,b) => a.day - b.day);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const next = annivs.find(a => a.day >= today);
+  if (next) {
+    const left = Math.round((next.day - today) / 86400000);
+    nextAnniv.innerHTML = LANG === "zh"
+      ? `距离「${next.label}」还有 <b>${left}</b> 天 🎉`
+      : `<b>${left}</b> days until <b>${next.label}</b> 🎉`;
+  }
+}
+
+/* ---- 留言 ---- */
+function renderMsgs() {
+  msgList.innerHTML = MSGS.length
+    ? MSGS.map((m,i) => `<div class="msg-item"><span class="del" data-i="${i}">✖</span><div class="who">${esc(m.who)} · ${m.time}</div><div class="body">${esc(m.body)}</div></div>`).join("")
+    : `<p class="center-note">${t("msgEmpty")}</p>`;
+}
+async function addMsg() {
+  const v = msgInput.value.trim();
+  if (!v) return;
+  const r = await api("/messages", { method: "POST", body: JSON.stringify({ who: msgWho.value, body: v }) });
+  MSGS = r.messages; msgInput.value = ""; renderMsgs();
+}
+msgInput.addEventListener("keydown", e => { if (e.key === "Enter") addMsg(); });
+msgList.addEventListener("click", async e => {
+  if (e.target.classList.contains("del")) {
+    const r = await api("/messages/" + e.target.dataset.i, { method: "DELETE" });
+    MSGS = r.messages; renderMsgs();
+  }
+});
+
+/* ---- 心愿勾选 ---- */
+wishlist.addEventListener("click", async e => {
+  const el = e.target.closest(".wish"); if (!el) return;
+  const i = +el.dataset.i;
+  const done = CONFIG.wishDone || [];
+  done[i] = !done[i];
+  CONFIG.wishDone = done;
+  await api("/config", { method: "POST", body: JSON.stringify({ wishDone: done }) });
+  el.classList.toggle("done", done[i]);
+});
+
+/* ---- 首次配置向导 ---- */
+const WZ_EMOJIS = ["🐶","🐱","🐰","🦊","🐻","🐼","🐨","🦁","🐷","🐸","🐵","🐔","🐧","🦄","🌸","🌻","⭐","🌙"];
+let wzStep = 1, wzEa = "🐶", wzEb = "🐱";
+function wzEmojiGrid(target) {
+  const cur = target === "a" ? wzEa : wzEb;
+  return WZ_EMOJIS.map(e =>
+    `<button class="${cur === e ? "sel" : ""}" onclick="wzPick('${target}','${e}')">${e}</button>`
+  ).join("");
+}
+function wzPick(target, e) {
+  if (target === "a") wzEa = e; else wzEb = e;
+  wzRenderPicks();
+}
+function wzRenderPicks() {
+  wzPickA.innerHTML = `<div class="wz-emoji-pick">${wzEmojiGrid("a")}</div>`;
+  wzPickB.innerHTML = `<div class="wz-emoji-pick">${wzEmojiGrid("b")}</div>`;
+}
+function wzOpen() {
+  wzStep = 1;
+  wzNameA.value = ""; wzNameB.value = ""; wzDate.value = "";
+  wzRenderPicks(); wzShow();
+  wizard.classList.add("open");
+}
+function wzShow() {
+  wzTitle.textContent = t("wzTitle");
+  wzHint.textContent = t("wzHint");
+  [wzStep1, wzStep2, wzStep3].forEach((el, i) => el.style.display = (i === wzStep - 1) ? "block" : "none");
+  [dot1, dot2, dot3].forEach((el, i) => el.classList.toggle("on", i < wzStep));
+  wzPrev.style.visibility = wzStep === 1 ? "hidden" : "visible";
+  wzNext.textContent = wzStep === 1 ? t("wzNext") : wzStep === 2 ? t("wzNext") : t("wzFinish");
+  if (wzStep === 1) wzNext.textContent = t("wzStart");
+}
+async function wzGo(dir) {
+  if (dir === 1 && wzStep === 2 && !wzDate.value) { alert(t("wzErrDate")); return; }
+  if (dir === 1 && wzStep === 3) {
+    // 保存向导结果
+    await api("/config", { method: "POST", body: JSON.stringify({
+      nameA: wzNameA.value.trim() || "宝贝",
+      nameB: wzNameB.value.trim() || "我",
+      emojiA: wzEa, emojiB: wzEb,
+      togetherSince: wzDate.value ? wzDate.value + "T00:00:00" : CONFIG.togetherSince,
+    })});
+    sessionStorage.setItem("setupDone-" + SLUG, "yes");
+    const data = await api("/data");
+    CONFIG = data.config;
+    renderAll();
+    wizard.classList.remove("open");
+    return;
+  }
+  wzStep = Math.min(3, Math.max(1, wzStep + dir));
+  wzShow();
+}
+
+/* ---- 编辑弹窗 ---- */
+const modal = document.getElementById("editModal");
+function openEdit() {
+  cfgNameA.value = CONFIG.nameA; cfgNameB.value = CONFIG.nameB;
+  cfgEmojiA.value = CONFIG.emojiA; cfgEmojiB.value = CONFIG.emojiB;
+  cfgDate.value = CONFIG.togetherSince.slice(0, 16);
+  editPhotos.innerHTML = ""; CONFIG.photos.forEach(p => addPhotoRow(p.src, p.cap));
+  editTimeline.innerHTML = ""; CONFIG.timeline.forEach(x => addStoryRow(x.date, x.title, x.text));
+  editWishes.innerHTML = ""; CONFIG.wishes.forEach(w => addWishRow(w));
+  modal.classList.add("open");
+}
+function closeEdit() { modal.classList.remove("open"); }
+modal.addEventListener("click", e => { if (e.target === modal) closeEdit(); });
+
+function addPhotoRow(src, cap) {
+  const div = document.createElement("div");
+  div.className = "edit-item";
+  div.innerHTML = `<input class="p-src" placeholder="https://..." value="${esc(src)}">
+                   <input class="p-cap" placeholder="${LANG === "zh" ? "说明" : "caption"}" value="${esc(cap)}" style="flex:0 0 130px;">
+                   <button class="rm">✖</button>`;
+  div.querySelector(".rm").onclick = () => div.remove();
+  editPhotos.appendChild(div);
+}
+function addStoryRow(date, title, text) {
+  const div = document.createElement("div");
+  div.className = "edit-item";
+  div.innerHTML = `<input class="t-date" type="date" value="${esc(date)}" style="flex:0 0 150px;">
+                   <input class="t-title" placeholder="${LANG === "zh" ? "标题" : "title"}" value="${esc(title)}">
+                   <button class="rm">✖</button>
+                   <textarea class="t-text" placeholder="${LANG === "zh" ? "故事内容..." : "story..."}" style="width:100%;">${esc(text)}</textarea>`;
+  div.querySelector(".rm").onclick = () => div.remove();
+  editTimeline.appendChild(div);
+}
+function addWishRow(w) {
+  const div = document.createElement("div");
+  div.className = "edit-item";
+  div.innerHTML = `<input class="w-txt" placeholder="${LANG === "zh" ? "心愿" : "wish"}" value="${esc(w)}">
+                   <button class="rm">✖</button>`;
+  div.querySelector(".rm").onclick = () => div.remove();
+  editWishes.appendChild(div);
+}
+async function saveConfig() {
+  const newCfg = {
+    nameA: cfgNameA.value.trim() || "宝贝",
+    nameB: cfgNameB.value.trim() || "我",
+    emojiA: cfgEmojiA.value.trim() || "🐶",
+    emojiB: cfgEmojiB.value.trim() || "🐱",
+    togetherSince: cfgDate.value || CONFIG.togetherSince,
+    photos: [...editPhotos.querySelectorAll(".edit-item")].map(d => ({
+      src: d.querySelector(".p-src").value.trim(), cap: d.querySelector(".p-cap").value.trim(),
+    })),
+    timeline: [...editTimeline.querySelectorAll(".edit-item")].map(d => ({
+      date: d.querySelector(".t-date").value,
+      title: d.querySelector(".t-title").value.trim(),
+      text: d.querySelector(".t-text").value.trim(),
+    })),
+    wishes: [...editWishes.querySelectorAll(".edit-item")].map(d => d.querySelector(".w-txt").value.trim()),
+    wishDone: [],
+  };
+  await api("/config", { method: "POST", body: JSON.stringify(newCfg) });
+  CONFIG = { ...CONFIG, ...newCfg };
+  renderAll(); closeEdit();
+  showToast(t("savedToast"));
+}
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+/* ---- 动效 ---- */
+const heartChars = ["💗","💖","💕","💞"];
+setInterval(() => {
+  const h = document.createElement("span");
+  h.className = "heart-float";
+  h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left = Math.random()*100 + "vw";
+  h.style.fontSize = 13 + Math.random()*19 + "px";
+  h.style.animationDuration = 8 + Math.random()*9 + "s";
+  heartsBg.appendChild(h);
+  setTimeout(() => h.remove(), 17000);
+}, 650);
+document.addEventListener("click", e => {
+  if (e.target.closest(".modal, .edit-fab, nav, button, select, a") || lockScreen.style.display !== "none") return;
+  const h = document.createElement("span");
+  h.className = "click-heart";
+  h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left = e.clientX - 11 + "px"; h.style.top = e.clientY - 11 + "px";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 800);
+});
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .12 });
+
+/* ---- 启动 ---- */
+applyLang();
+initLock();
+const ioStart = setInterval(() => {
+  if (site.style.display === "block") {
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+    clearInterval(ioStart);
+  }
+}, 500);
+</script>
+</body>
+</html>

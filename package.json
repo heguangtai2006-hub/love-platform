@@ -1,0 +1,12 @@
+{
+  "name": "love-platform",
+  "version": "1.0.0",
+  "description": "情侣网站平台 - 一个平台,每对情侣一个专属小窝",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
